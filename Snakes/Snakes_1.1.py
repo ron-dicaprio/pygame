@@ -184,7 +184,7 @@ def main():
 
         print_text(screen, font1, 30, 7, f'速度: 0')
         print_text(screen, font1, 450, 7, f'得分: 0')
-
+        
         # 食物会把gameover覆盖
         if not game_over:
             pygame.draw.rect(screen, ORANGE, (food[0] * SIZE, food[1] * SIZE, SIZE, SIZE), 0)
