@@ -2,7 +2,7 @@
 import pygame, sys,os,random
 from collections import deque
 
-# 窗口居中
+# screen窗口居中
 os.environ['SDL_VIDEO_CENTERED'] = '1'  
 
 # color      R    G    B
@@ -48,7 +48,6 @@ def create_food(snake):
     food_y = random.randint(SCOPE_Y[0], SCOPE_Y[1])
     # while解决掉食物可能多次掉落在蛇身上的问题
     while (food_x, food_y) in snake:
-        # 如果食物出现在蛇身上，则绘一次
         food_x = random.randint(SCOPE_X[0], SCOPE_X[1])
         food_y = random.randint(SCOPE_Y[0], SCOPE_Y[1])
     return food_x, food_y
@@ -78,6 +77,9 @@ def main():
     # 食物
     food = create_food(snake)
 
+    # 初始化分数
+    score=0
+
     # 填充背景色
     screen.fill(BGCOLOR)
     
@@ -85,8 +87,6 @@ def main():
 
     while True: 
         for event in pygame.event.get(): 
-            
-            # close windows or press ESC
             # if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -98,14 +98,15 @@ def main():
                         pos=(1, 0)
                         next_s = (snake[0][0] + pos[0], snake[0][1] + pos[1])
                         if next_s == food:
+                            score+=1
                             snake.appendleft(next_s)
                             food = create_food(snake)
-                            #snake.pop()
                             pygame.display.update() 
                         else:
                             # 判断触碰便捷的情况
                             if SCOPE_X[0] <= next_s[0] <= SCOPE_X[1] and SCOPE_Y[0] <= next_s[1] <= SCOPE_Y[1] and game_over == False:
                                 snake.appendleft(next_s)
+                                # pop()函数snake清除队列中最后一位
                                 snake.pop()
                                 pygame.display.update()
                             else:
@@ -117,9 +118,9 @@ def main():
                         pos=(-1, 0)
                         next_s = (snake[0][0] + pos[0], snake[0][1] + pos[1])
                         if next_s == food:
+                            score+=1
                             snake.appendleft(next_s)
                             food = create_food(snake)
-                            #snake.pop()
                             pygame.display.update() 
                         else:
                             if SCOPE_X[0] <= next_s[0] <= SCOPE_X[1] and SCOPE_Y[0] <= next_s[1] <= SCOPE_Y[1] and game_over == False:
@@ -136,9 +137,9 @@ def main():
                         pos=(0, -1)
                         next_s = (snake[0][0] + pos[0], snake[0][1] + pos[1])
                         if next_s == food:
+                            score+=1
                             snake.appendleft(next_s)
                             food = create_food(snake)
-                            #snake.pop()
                             pygame.display.update() 
                         else:
                             if SCOPE_X[0] <= next_s[0] <= SCOPE_X[1] and SCOPE_Y[0] <= next_s[1] <= SCOPE_Y[1] and game_over == False:
@@ -155,11 +156,10 @@ def main():
                         pos=(0, 1)
                         next_s = (snake[0][0] + pos[0], snake[0][1] + pos[1])
                         if next_s == food:
+                            score+=1
                             snake.appendleft(next_s)
                             food = create_food(snake)
-                            #snake.pop()
                             pygame.display.update()
-                            
                         else:
                             # game_over控制游戏结束之后Snake无法再移动
                             if SCOPE_X[0] <= next_s[0] <= SCOPE_X[1] and SCOPE_Y[0] <= next_s[1] <= SCOPE_Y[1] and game_over == False:
@@ -182,15 +182,16 @@ def main():
         for ss in snake:
             pygame.draw.rect(screen, DARK, (ss[0] * SIZE + LINE_WIDTH, ss[1] * SIZE + LINE_WIDTH, SIZE - LINE_WIDTH * 2, SIZE - LINE_WIDTH * 2), 0)
 
-        print_text(screen, font1, 30, 7, f'速度: 0')
-        print_text(screen, font1, 450, 7, f'得分: 0')
-        
+        print_text(screen, font1, 30, 7, f'速度: 1')
+        print_text(screen, font1, 450, 7, f'得分:  %s' % (score))
+
         # 食物会把gameover覆盖
         if not game_over:
             pygame.draw.rect(screen, ORANGE, (food[0] * SIZE, food[1] * SIZE, SIZE, SIZE), 0)
         
         if game_over:
             print_text(screen, font2, (SCREEN_WIDTH - fwidth) // 2, (SCREEN_HEIGHT - fheight) // 2, 'GAME OVER', RED) 
+
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
