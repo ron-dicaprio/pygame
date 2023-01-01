@@ -2,3 +2,9 @@
 ## 方向键手动控制Snake移动的方向
 
 ![Snakes_SCOPE.jpg](https://raw.githubusercontent.com/ron-dicaprio/pygame/master/Snakes/Snakes_SCOPE.jpg)
+
+# todo
+```sh
+# 蛇吃到自己的身体的时候未游戏结束
+# 优化成蛇自动移动
+```
