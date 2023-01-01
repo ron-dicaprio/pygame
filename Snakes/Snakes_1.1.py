@@ -5,7 +5,7 @@ from collections import deque
 # screen窗口居中
 os.environ['SDL_VIDEO_CENTERED'] = '1'  
 
-# color      R    G    B
+# color_list R    G    B
 GRAY     = (100, 100, 100)
 NAVYBLUE = ( 60,  60, 100)
 WHITE    = (255, 255, 255)
@@ -34,7 +34,7 @@ SCOPE_Y = (2, SCREEN_HEIGHT // SIZE - 1)
 
 FPSCLOCK = pygame.time.Clock()
 
-# 初始化蛇,长度3
+# 初始化蛇,长度3个单位
 def init_snake():
     snake = deque()
     snake.append((2, SCOPE_Y[0]))
@@ -60,6 +60,7 @@ def main():
     # 时钟同步
     global FPSCLOCK, screen
     pygame.init()
+    pygame.mouse.set_visible(0)
     # 背景音乐并设置音量50%
     pygame.mixer.music.load('files/ZB_BGM1.mp3')
     pygame.mixer.music.play()
@@ -172,17 +173,19 @@ def main():
                         pass
         # 填充背景色
         screen.fill(BGCOLOR)
+
         # 画网格线 竖线
         for x in range(SIZE, SCREEN_WIDTH, SIZE):
             pygame.draw.line(screen, BLACK, (x, SCOPE_Y[0] * SIZE), (x, SCREEN_HEIGHT), LINE_WIDTH)
         # 画网格线 横线
         for y in range(SCOPE_Y[0] * SIZE, SCREEN_HEIGHT, SIZE):
             pygame.draw.line(screen, BLACK, (0, y), (SCREEN_WIDTH, y), LINE_WIDTH)
+
         # 画蛇
         for ss in snake:
             pygame.draw.rect(screen, DARK, (ss[0] * SIZE + LINE_WIDTH, ss[1] * SIZE + LINE_WIDTH, SIZE - LINE_WIDTH * 2, SIZE - LINE_WIDTH * 2), 0)
 
-        print_text(screen, font1, 30, 7, f'速度: 1')
+        print_text(screen, font1, 30, 7, f'速度: 手动控制')
         print_text(screen, font1, 450, 7, f'得分:  %s' % (score))
 
         # 食物会把gameover覆盖
@@ -191,7 +194,9 @@ def main():
         
         if game_over:
             print_text(screen, font2, (SCREEN_WIDTH - fwidth) // 2, (SCREEN_HEIGHT - fheight) // 2, 'GAME OVER', RED) 
-
+            # 游戏结束，展示光标
+            pygame.mouse.set_visible(1)
+            
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
