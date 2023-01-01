@@ -1,5 +1,5 @@
 #-*- encoding:utf-8 -*-
-import pygame, sys,os,random
+import pygame, sys, os, random,time
 from collections import deque
 
 # screen窗口居中
@@ -34,6 +34,8 @@ SCOPE_Y = (2, SCREEN_HEIGHT // SIZE - 1)
 
 FPSCLOCK = pygame.time.Clock()
 
+start_time=time.time()
+
 # 初始化蛇,长度3个单位
 def init_snake():
     snake = deque()
@@ -56,17 +58,20 @@ def print_text(screen, font, x, y, text, fcolor=(255, 255, 255)):
     imgText = font.render(text, True, fcolor)
     screen.blit(imgText, (x, y))
 
+def bg_music():
+    # 背景音乐并设置音量80%
+    pygame.mixer.music.load('files/ZB_BGM1.mp3')
+    pygame.mixer.music.set_volume(0.80)
+    pygame.mixer.music.play(-1)
+    
 def main():
     # 时钟同步
     global FPSCLOCK, screen
     pygame.init()
     pygame.mouse.set_visible(0)
-    # 背景音乐并设置音量50%
-    pygame.mixer.music.load('files/ZB_BGM1.mp3')
-    pygame.mixer.music.play()
-    pygame.mixer.music.set_volume(0.80)
+    bg_music()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption('Snakes')
+    pygame.display.set_caption('Funny-Games-Snakes')
     pos = (1, 0)
     font1 = pygame.font.SysFont('SimHei', 24)  # 得分的字体
     font2 = pygame.font.Font(None, 72)         # GAME OVER 的字体
@@ -83,9 +88,8 @@ def main():
 
     # 填充背景色
     screen.fill(BGCOLOR)
-    
+    # 定义变量
     game_over = False
-
 
     while True: 
         for event in pygame.event.get(): 
@@ -108,7 +112,7 @@ def main():
                             food = create_food(snake)
                             pygame.display.update() 
                         else:
-                            # 判断触碰便捷的情况
+                            # 是否越界
                             if SCOPE_X[0] <= next_s[0] <= SCOPE_X[1] and SCOPE_Y[0] <= next_s[1] <= SCOPE_Y[1] and game_over == False:
                                 snake.appendleft(next_s)
                                 # pop()函数snake清除队列中最后一位
@@ -160,7 +164,7 @@ def main():
                             else:
                                 game_over=True 
                     else:
-                        pass                    
+                        pass
 
                 if event.key == pygame.K_DOWN:
                     if pos[1] != -1:
@@ -198,15 +202,19 @@ def main():
         for ss in snake:
             pygame.draw.rect(screen, DARK, (ss[0] * SIZE + LINE_WIDTH, ss[1] * SIZE + LINE_WIDTH, SIZE - LINE_WIDTH * 2, SIZE - LINE_WIDTH * 2), 0)
 
-        print_text(screen, font1, 30, 7, f'速度: 手动控制')
-        print_text(screen, font1, 450, 7, f'得分:  %s' % (score))
-
         # 食物会把gameover覆盖
         if not game_over:
+            cur_time=time.time()
+            print_text(screen, font1, 30, 7, f'时间: %sS' % (round(cur_time-start_time,1)))
+            print_text(screen, font1, 450, 7, f'得分:  %s' % (score))
             pygame.draw.rect(screen, ORANGE, (food[0] * SIZE, food[1] * SIZE, SIZE, SIZE), 0)
 
         if game_over:
             print_text(screen, font2, (SCREEN_WIDTH - fwidth) // 2, (SCREEN_HEIGHT - fheight) // 2, 'GAME OVER', RED) 
+            print_text(screen, font1, 30, 7, f'时间: %sS' % (round(cur_time-start_time,1)))
+            print_text(screen, font1, 450, 7, f'得分:  %s' % (score))
+            # 游戏结束，停止音乐
+            pygame.mixer.music.stop()
             # 游戏结束，展示光标
             pygame.mouse.set_visible(1)
             
@@ -215,6 +223,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
